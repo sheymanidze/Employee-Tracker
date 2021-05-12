@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/sheymanidze/Employee-Tracker/issues"
   },
-  "homepage": "https://github.com/sheymanidze/Employee-Tracker#readme"
+  "homepage": "https://github.com/sheymanidze/Employee-Tracker#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
