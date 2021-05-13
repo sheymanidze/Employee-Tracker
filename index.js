@@ -1,9 +1,9 @@
 const inquirer = require('inquirer');
 const express = require('express');
-const sequelize = require('./config/connection');
+const connect = require('./config/connection.js');
 const mysql = require('mysql');
+const cTable = require('console.table')
 
-const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
@@ -15,7 +15,7 @@ sequelize.sync({ force: false }).then(() => {
 });
 
 
-function init() {
+function optionsStart() {
   inquirer.prompt({
     type: 'list',
     name: 'start',
@@ -73,11 +73,40 @@ function init() {
           break;
 
         case 'Remove Role':
-          removeRole;
+          removeRole();
           break;
       }
     })
 };
 
 //View All Employees
+function allEmployees() {
+  const queryEmp = `SELECT employee.id, employee.first_name, employee.last_name, role.title AS role, role.salary AS salary, CONCAT(manager.first_name, ' ',manager.last_name) AS manager, department.name AS department
+  FROM employee
+  LEFT JOIN role ON employee.role_id=department.id
+  LEFT JOIN employee manager ON employee.manager_id=manager.id`
 
+  connection.query(queryEmp, (err, data) => {
+    if (err) throw err;
+    console.table(data);
+    optionsStart();
+  })
+}
+
+//View All Employess By Depatment
+//function empByDepartment()
+
+//class mainData {
+ // constructor(connection) {
+// this.connection = connection;
+// }
+//get AllEmployees(){
+// return this.connection
+//.promise()  
+//.query(`SELECT employee.id, employee.first_name, employee.last_name, role.title AS role, role.salary AS salary, CONCAT(manager.first_name, ' ',manager.last_name) AS manager, department.name AS department
+ // FROM employee
+ // LEFT JOIN role ON employee.role_id=role.id
+//LEFT JOIN department role.department_id=department.id`)
+//.catch(err=>err)
+//}
+//}
