@@ -1,7 +1,6 @@
 const inquirer = require('inquirer');
 const connection = require('./config/connection.js');
 const mysql = require('mysql');
-const { restoreDefaultPrompts } = require('inquirer');
 require('console.table');
 
 
@@ -75,7 +74,8 @@ function optionsStart() {
 
 //View All Employees
 const allEmployees = () => {
-  connection.query(`SELECT employee.id, first_name, last_name, role.title, department.name AS department,  manager_id, salary FROM employee INNER JOIN role ON employee.role_id=role.id INNER JOIN department ON role.department_id=department_id`, (err, res) => {
+  connection.query(`SELECT employee.id, employee.first_name, employee.last_name, role.title,  department.name AS 'department', employee.manager_id, role.salary FROM employee 
+  INNER JOIN role ON employee.role_id=role.id INNER JOIN department ON role.department_id= department.id;`, (err, res) => {
     if (err) throw err;
 
     console.table(res);
