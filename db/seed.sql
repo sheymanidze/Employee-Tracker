@@ -8,7 +8,7 @@ VALUES
 ("IT"),
 ("HR")
 
-INSERT INTO roles (title, salary, department_id)
+INSERT INTO role (title, salary, department_id)
 VALUES
 ("CEO", 350000, Null),
 ("Marketing Manager", 100000, 1),

@@ -79,72 +79,33 @@ const allEmployees = () => {
     if (err) throw err;
 
     console.table(res)
-    //console.log('----------------------------');
+
     optionsStart()
 
   });
 }
 
+//View All Departments
 
+const allDepartments = () => {
+  connection.query('SELECT * FROM department', (err, res) => {
+    if (err) throw err;
 
-// function allEmployees() {
-//   const queryEmp = `SELECT employee.id, employee.first_name, employee.last_name, role.title AS role, role.salary AS salary, CONCAT(manager.first_name, ' ',manager.last_name) AS manager, department.name AS department
-//   FROM employee
-//   LEFT JOIN role ON employee.role_id=department.id
-//   LEFT JOIN employee manager ON employee.manager_id=manager.id`
+    console.table(res)
 
-//   connection.query(queryEmp, (err, data) => {
-//     if (err) throw err;
-//     console.table(data);
-//     optionsStart();
-//   })
-// }
+    optionsStart()
 
-//View All Employess By Depatment
-// function empByDepartment() {
-//   const queryByDep = ('SELECT * FROM department');
+  });
+}
 
-//   connection.query(queryByDep, (err, answer) => {
-//     if (err) throw err;
-//     const department = response.map(element => {
-//       return { name: `${element.name}` }
-//     });
-//     inquirer.prompt([{
-//       type: 'list',
-//       name: 'depatments',
-//       message: 'Please chose a department',
-//       choices: department
-//     }]).then(answer => {
-//       const queryEmpByDep = `SELECT employee.first_name, employee.last_name, employee.role_id AS role,  CONCAT(manager.first_name, ' ',manager.last_name) AS manager, department.name AS department
-//       FROM employee
-//       LEFT JOIN employee ON employee.role_id=role.id
-//       LEFT JOIN employee manager ON employee.manager_id=manager.id
-//       LEFT JOIN department ON role.department_id=department.id
-//       WHERE ?`
+//View All Roles
+const allRoles = () => {
+  connection.query('SELECT * FROM role', (err, res) => {
+    if (err) throw err;
 
-//       connection.query(queryEmpByDep, [{ name: answer.departments }], function (err, res) {
-//         if (err) throw err;
-//         console.table(res);
-//         optionsStart();
-//       })
-//     })
+    console.table(res)
 
-//   })
-// };
+    optionsStart()
 
-//View Employee by Manager
-
-//class mainData {
- // constructor(connection) {
-// this.connection = connection;
-// }
-//get AllEmployees(){
-// return this.connection
-//.promise()  
-//.query(`SELECT employee.id, employee.first_name, employee.last_name, role.title AS role, role.salary AS salary, CONCAT(manager.first_name, ' ',manager.last_name) AS manager, department.name AS department
- // FROM employee
- // LEFT JOIN role ON employee.role_id=role.id
-//LEFT JOIN department ON role.department_id=department.id`)
-//.catch(err=>err)
-//}
-//}
+  });
+}
