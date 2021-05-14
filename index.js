@@ -15,17 +15,12 @@ function optionsStart() {
     type: 'list',
     name: 'start',
     message: 'What would you like to do?',
-    choices: ['View All Employees', 'View All Employess By Depatment', 'View All Emplyees by Manager', 'Add Employee', 'Remove Employee', 'Update Employee Role', 'Update Employee Manager', 'View All Departments', 'Add New Department', 'Remove Department', 'View All Roles', 'Add New Role', 'Remove Role', 'View total utilized budget']
+    choices: ['View All Employees', 'View All Emplyees by Manager', 'Add Employee', 'Remove Employee', 'Update Employee Role', 'Update Employee Manager', 'View All Departments', 'Add New Department', 'Remove Department', 'View All Roles', 'Add New Role', 'Remove Role', 'View total utilized budget']
   })
     .then((answer) => {
       switch (answer.start) {
         case 'View All Employees':
           allEmployees();
-          break;
-
-        case 'View All Employess By Depatment':
-          empByDepartment();
-          break;
 
         case 'View All Emplyees by Manager':
           empByManager();
@@ -69,6 +64,10 @@ function optionsStart() {
 
         case 'Remove Role':
           removeRole();
+          break;
+
+        case 'View total utilized budget':
+          totalBudget();
           break;
       }
     })
@@ -218,3 +217,17 @@ const addRole = () => {
     })
   })
 }
+
+//Update Employee Roles (updateEmpRole)
+
+//Update Employee Manager (updateEmpManager)
+
+//View Employee by Manager (empByManager)
+
+//Delete Employee (removeEmp)
+
+//Delete Departments (removeDepartment)
+
+//Delete Roles (removeRole)
+
+//View the total utilized budget of a department ()
