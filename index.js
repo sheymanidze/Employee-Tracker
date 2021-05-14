@@ -392,23 +392,24 @@ const removeRole = () => {
         optionsStart();
       })
     })
-  }
+  })
+}
 
 //View the total utilized budget of a department (totalBudget)
 const totalBudget = () => {
-    inquirer.prompt([{
-      type: 'rawlist',
-      name: 'debBud',
-      message: 'Please choose the department ID to view total utilized budget',
-      choices: ['CEO', 'Marketing', 'Sales', 'Accounting', 'IT', 'HR']
-    }]).then((answer) => {
-      connection.query('SELECT department_id, title SUM (salary) FROM role GROUP by department_id;', {
-        department_id: answer.depBud
-      },
-        (err, res) => {
-          if (err) throw err;
-          console.table(res);
-          optionsStart();
-        })
-    })
-  }
+  inquirer.prompt([{
+    type: 'rawlist',
+    name: 'debBud',
+    message: 'Please choose the department ID to view total utilized budget',
+    choices: ['CEO', 'Marketing', 'Sales', 'Accounting', 'IT', 'HR']
+  }]).then((answer) => {
+    connection.query('SELECT department_id, title SUM (salary) FROM role GROUP by department_id;', {
+      department_id: answer.depBud
+    },
+      (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        optionsStart();
+      })
+  })
+}
