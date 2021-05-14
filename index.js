@@ -20,6 +20,7 @@ function optionsStart() {
       switch (answer.start) {
         case 'View All Employees':
           allEmployees();
+          break;
 
         case 'View All Emplyees by Manager':
           empByManager();
@@ -76,8 +77,20 @@ function optionsStart() {
 
 //View All Employees
 const allEmployees = () => {
-  connection.query(`SELECT employee.id, employee.first_name, employee.last_name, role.title,  department.name AS 'department', employee.manager_id, role.salary FROM employee 
-  INNER JOIN role ON employee.role_id=role.id INNER JOIN department ON role.department_id= department.id;`, (err, res) => {
+  connection.query(`
+  SELECT 
+  a.id AS Employee,
+  a.first_name AS First,
+  a.last_name AS Last,
+  role.title AS Title,
+  department.name AS Department,
+  role.salary AS Salary,
+  concat(b.first_name, ' ',b.last_name) as Manager
+  FROM employee a 
+  LEFT OUTER JOIN employee b ON a.manager_id = b.id 
+  INNER JOIN role ON (role.id = a.role_id) 
+  INNER JOIN department ON (department.id = role.department_id) 
+  ORDER BY a.id;`, (err, res) => {
     if (err) throw err;
 
     console.table(res);
@@ -117,8 +130,7 @@ const addEmp = () => {
   inquirer.prompt([{
     type: 'input',
     name: 'first_name',
-    message: 'Please provide First Name of employee you would like to add',
-
+    message: 'Please provide First Name of employee you would like to add'
   },
   {
     type: 'input',
@@ -152,100 +164,19 @@ const addEmp = () => {
           ]).then(response => {
             const manager = response.manager;
             newEmp.push(manager);
-            // connection.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)`, newEmp, (err) => {
-            //   if (err) throw err;
-            //   allEmployees();
-
-            // connection.query(`INSERT INTO employee SET ?`,
-            //   {
-            //     first_name: response.first_name,
-            //     last_name: response.last_name,
-            //     role: response.role,
-            //     manager: response.manager
-            //   }, function (err, res) {
-            //     console.table(res)
-            //     allEmployees();
-            //   })
-            connection.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES`, [response.first_name, response.last_name, response.role, response.manager], newEmp, (err, res) => {
-
+            connection.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`, newEmp, (err, res) => {
+              console.log(newEmp);
               if (err) throw err;
 
-              console.table(res)
-
               allEmployees();
-
-              optionsStart()
             })
           })
-
         })
       })
     })
   })
 }
 
-
-// const addEmp = () => {
-//   inquirer.prompt([{
-//     type: 'input',
-//     name: 'first_name',
-//     message: 'Please provide First Name of employee you would like to add',
-
-//   },
-//   {
-//     type: 'input',
-//     name: 'last_name',
-//     message: 'Please provide Last Name of employee you would like to add'
-//   },
-//   {
-//     type: 'list',
-//     name: 'role.title',
-//     message: "Please choose employee's role",
-//     choices: ["Marketing Manager", "Marketing Assistant", "Sales Manager", "Sales Representative", "Account Manager", "Account Assistant", "IT Manager", "Tech Support", "Developer", "Human Resources"]
-//   },
-//   {
-//     type: 'rawlist',
-//     name: 'manager_id',
-//     message: 'Please choose manager ID of employee you would like to add',
-//     choices() {
-//       const managerChoices = [];
-//       res.forEach((manager_id) => {
-//         managerChoices.push(manager_id)
-//       });
-//       return managerChoices;
-//     }
-//   },
-//   {
-//     type: 'rawlist',
-//     name: 'department',
-//     message: 'Please choose department of employee you would like to add ',
-//     choices() {
-//       const depChoices = [];
-//       res.forEach((department_name) => {
-//         depChoices.push(department_name)
-//       });
-//       return depChoices;
-//     }
-//   }
-
-//   ]).then((answer) => {
-//     connection.query(`INSERT INTO employee (first_name, role_id, manager_id) VALUES`, [answer.first_name, answer.last_name, answer.role, answer.manager], (err, res) => {
-//       // {
-//       //   first_name: answer.first_name,
-//       //   last_name: answer.last_name,
-//       //   title: answer.role.title,
-//       //   manager_id: answer.manager_id
-//       //}, 
-//       if (err) throw err;
-
-//       console.table(res)
-
-//       addEmp();
-
-//       optionsStart()
-//     })
-//   })
-// }
 
 //Add Department
 const addDepartment = () => {
@@ -257,7 +188,6 @@ const addDepartment = () => {
     connection.query(`INSERT INTO department (name) VALUES (?)`, answer.department_name, (err) => {
       if (err) throw err;
       allDepartments();
-
     })
   })
 }
@@ -305,7 +235,6 @@ const addRole = () => {
   });
 }
 
-
 //Update Employee Roles (updateEmpRole)
 
 
@@ -313,20 +242,24 @@ const addRole = () => {
 
 
 
-//View Employee by Manager (empByManager)
+// View Employee by Manager (empByManager)
 const empByManager = () => {
-  connection.query(`SELECT 
-  a.first_name AS FirstName,
-  a.last_name AS LastName,
-  concat(b.first_name, ' ',b.last_name) as Manager
-  FROM employee a
-  LEFT OUTER JOIN employee b ON a.manager_id = b.id 
-  ORDER BY Manager;`, (err, res) => {
+  connection.query(
+    `SELECT 
+    a.first_name AS FirstName,
+    a.last_name AS LastName,
+    concat(b.first_name, ' ',b.last_name) as Manager
+    FROM employee a
+    LEFT OUTER JOIN employee b ON a.manager_id = b.id 
+    ORDER BY Manager;
+    `, (err, res) => {
     if (err) throw err;
     console.table(res);
     optionsStart();
-  })
+  }
+  )
 }
+
 
 //Delete Employee (removeEmp)
 
