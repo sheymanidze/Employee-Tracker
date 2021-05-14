@@ -1,7 +1,7 @@
 const inquirer = require('inquirer');
 const connection = require('./config/connection.js');
 const mysql = require('mysql');
-const cTable = require('console.table');
+require('console.table');
 
 
 connection.connect(function (err) {
@@ -77,16 +77,8 @@ function optionsStart() {
 const allEmployees = () => {
   connection.query('SELECT * FROM employee', (err, res) => {
     if (err) throw err;
-    res.forEach(({
-      id,
-      first_name,
-      last_name,
-      role_id,
-      manager_id
-    }) => {
-      console.table(id, first_name, last_name, role_id, manager_id)
-      //console.log(`| ${id} | ${first_name} | ${last_name} | ${role_id} | ${manager_id} |`);
-    });
+
+    console.table(res)
     //console.log('----------------------------');
     optionsStart()
 
