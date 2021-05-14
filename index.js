@@ -123,59 +123,127 @@ const addEmp = () => {
     name: 'last_name',
     message: 'Please provide Last Name of employee you would like to add'
   },
-  {
-    type: 'list',
-    name: 'role.title',
-    message: "Please choose employee's role",
-    choices: ["Marketing Manager", "Marketing Assistant", "Sales Manager", "Sales Representative", "Account Manager", "Account Assistant", "IT Manager", "Tech Support", "Developer", "Human Resources"]
-  },
-  {
-    type: 'rawlist',
-    name: 'manager_id',
-    message: 'Please choose manager ID of employee you would like to add',
-    choices() {
-      const managerChoices = [];
-      res.forEach((manager_id) => {
-        managerChoices.push(manager_id)
-      });
-      return managerChoices;
-    }
-  },
-  {
-    type: 'rawlist',
-    name: 'department',
-    message: 'Please choose department of employee you would like to add ',
-    choices() {
-      const depChoices = [];
-      res.forEach((department_name) => {
-        depChoices.push(department_name)
-      });
-      return depChoices;
-    }
-  }
-
   ]).then((answer) => {
-    connection.query(`SELECT employee.id, employee.first_name, employee.last_name, employee.role_id, role.title, department.name,
-    role.salary, employee.manager_id 
-      FROM employee
-      INNER JOIN role on role.id = employee.role_id
-      INNER JOIN department ON department.id = role.department_id`, (err, res) => {
-      // {
-      //   first_name: answer.first_name,
-      //   last_name: answer.last_name,
-      //   title: answer.role.title,
-      //   manager_id: answer.manager_id
-      //}, 
+    const newEmp = [answer.first_name, answer.last_name]
+    connection.query(`SELECT role.id, role.title FROM role`, (err, res) => {
       if (err) throw err;
+      const roles = res.map(({ role_id, title }) => ({ name: title, value: role_id }));
+      inquirer.prompt([{
+        type: 'list',
+        name: 'role',
+        message: "Please choose employee's role",
+        choices: roles
+      }
+      ]).then(response => {
+        const role = response.role;
+        newEmp.push(role);
+        connection.query(`SELECT * FROM employee`, (err, res) => {
+          if (err) throw err;
+          const mg = res.map(({ employee_id, first_name, last_name }) => ({ name: first_name + ' ' + last_name, value: employee_id }));
+          inquirer.prompt([{
+            type: 'list',
+            name: 'manager',
+            message: 'Please choose manager of employee you would like to add',
+            choices: mg
+          }
 
-      console.table(res)
+          ]).then(response => {
+            const manager = response.manager;
+            newEmp.push(manager);
+            // connection.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)`, newEmp, (err) => {
+            //   if (err) throw err;
+            //   allEmployees();
 
-      addEmp();
+            // connection.query(`INSERT INTO employee SET ?`,
+            //   {
+            //     first_name: response.first_name,
+            //     last_name: response.last_name,
+            //     role: response.role,
+            //     manager: response.manager
+            //   }, function (err, res) {
+            //     console.table(res)
+            //     allEmployees();
+            //   })
+            connection.query(`INSERT INTO employee (first_name, role_id, manager_id) VALUES`, [response.first_name, response.last_name, response.role, response.manager], newEmp, (err, res) => {
 
-      optionsStart()
+              if (err) throw err;
+
+              console.table(res)
+
+              allEmployees();
+
+              optionsStart()
+            })
+          })
+
+        })
+      })
     })
   })
 }
+
+
+// const addEmp = () => {
+//   inquirer.prompt([{
+//     type: 'input',
+//     name: 'first_name',
+//     message: 'Please provide First Name of employee you would like to add',
+
+//   },
+//   {
+//     type: 'input',
+//     name: 'last_name',
+//     message: 'Please provide Last Name of employee you would like to add'
+//   },
+//   {
+//     type: 'list',
+//     name: 'role.title',
+//     message: "Please choose employee's role",
+//     choices: ["Marketing Manager", "Marketing Assistant", "Sales Manager", "Sales Representative", "Account Manager", "Account Assistant", "IT Manager", "Tech Support", "Developer", "Human Resources"]
+//   },
+//   {
+//     type: 'rawlist',
+//     name: 'manager_id',
+//     message: 'Please choose manager ID of employee you would like to add',
+//     choices() {
+//       const managerChoices = [];
+//       res.forEach((manager_id) => {
+//         managerChoices.push(manager_id)
+//       });
+//       return managerChoices;
+//     }
+//   },
+//   {
+//     type: 'rawlist',
+//     name: 'department',
+//     message: 'Please choose department of employee you would like to add ',
+//     choices() {
+//       const depChoices = [];
+//       res.forEach((department_name) => {
+//         depChoices.push(department_name)
+//       });
+//       return depChoices;
+//     }
+//   }
+
+//   ]).then((answer) => {
+//     connection.query(`INSERT INTO employee (first_name, role_id, manager_id) VALUES`, [answer.first_name, answer.last_name, answer.role, answer.manager], (err, res) => {
+//       // {
+//       //   first_name: answer.first_name,
+//       //   last_name: answer.last_name,
+//       //   title: answer.role.title,
+//       //   manager_id: answer.manager_id
+//       //}, 
+//       if (err) throw err;
+
+//       console.table(res)
+
+//       addEmp();
+
+//       optionsStart()
+//     })
+//   })
+// }
 
 //Add Department
 const addDepartment = () => {
@@ -227,6 +295,7 @@ const addRole = () => {
 }
 
 //Update Employee Roles (updateEmpRole)
+
 
 //Update Employee Manager (updateEmpManager)
 
