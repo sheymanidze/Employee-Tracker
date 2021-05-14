@@ -398,7 +398,7 @@ const removeDepartment = () => {
 
 //Delete Roles (removeRole)
 const removeRole = () => {
-  const remRole = '`SELECT * FROM role'
+  const remRole = 'SELECT * FROM role'
   connection.query(remRole, (err, res) => {
     if (err) throw err;
     inquirer.prompt([{
@@ -412,8 +412,7 @@ const removeRole = () => {
       const remRole2 = `DELETE FROM role WHERE ?`
       connection.query(remRole2, [{ id: answer.role }], (err) => {
         if (err) throw err;
-        console.table(res);
-        optionsStart();
+        allRoles();
       })
     })
   })
