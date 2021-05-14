@@ -155,17 +155,25 @@ const addEmp = () => {
   }
 
   ]).then((answer) => {
-    connection.query(`INSERT INTO employee SET ?`,
-      {
-        first_name: answer.first_name,
-        last_name: answer.last_name,
-        title: answer.role.title,
-        manager_id: answer.manager_id
-      }, function (err, res) {
-        console.table(res);
-        console.table(err);
-        optionsStart();
-      })
+    connection.query(`SELECT employee.id, employee.first_name, employee.last_name, employee.role_id, role.title, department.name,
+    role.salary, employee.manager_id 
+      FROM employee
+      INNER JOIN role on role.id = employee.role_id
+      INNER JOIN department ON department.id = role.department_id`, (err, res) => {
+      // {
+      //   first_name: answer.first_name,
+      //   last_name: answer.last_name,
+      //   title: answer.role.title,
+      //   manager_id: answer.manager_id
+      //}, 
+      if (err) throw err;
+
+      console.table(res)
+
+      addEmp();
+
+      optionsStart()
+    })
   })
 }
 
@@ -223,6 +231,41 @@ const addRole = () => {
 //Update Employee Manager (updateEmpManager)
 
 //View Employee by Manager (empByManager)
+const empByManager = () => {
+  connection.query(`SELECT CONCAT(employee.first_name, ' ' , employee.last_name) AS full_name FROM employee INNER JOIN role ON employee.role_id=role.id
+  INNER JOIN department ON department.id=role.department_id
+  WHERE role.title  IN ('Marketing Manager', 'Sales Manager', 'Account Manager', 'IT Manager', 'Human Resources');`,
+    function (err, res) {
+      let managerList = [];
+      let managerID = {};
+
+      res.forEach(({ full_name, id }) => {
+        managerList.push(full_name);
+        managerID[full_name] = id;
+      });
+
+      console.table(res);
+
+
+      inquirer.prompt([{
+        type: 'list',
+        name: 'byManager',
+        message: 'Please choose the manager to view employees',
+        choices: managerList
+      }]).then((answer) => {
+        let selectedManager = managerID[answer.managerList];
+        connection.query(`SELECT CONCAT(employee.first_name, ' ' , employee.last_name) AS full_name, department_name, role.title FROM employee INNER JOIN role ON employee.role_id = role.id INNER JOIN department ON department.id=role.department_id WHERE manager_id=?;`,
+          {
+            manager_id: selectedManager
+          },
+          function (err, manager) {
+            console.table(manager)
+          })
+        optionsStart()
+
+      });
+    })
+}
 
 //Delete Employee (removeEmp)
 
@@ -259,11 +302,12 @@ const addRole = () => {
 //View the total utilized budget of a department (totalBudget)
 const totalBudget = () => {
   inquirer.prompt([{
-    type: 'rewlist',
-    name: 'depBud',
-    message: 'Please choose the department'
+    type: 'rawlist',
+    name: 'debBud',
+    message: 'Please choose the department ID to view total utilized budget',
+    choices: ['CEO', 'Marketing', 'Sales', 'Accounting', 'IT', 'HR']
   }]).then((answer) => {
-    connection.query('SELECT department_id, SUM (salary) FROM role GROUP by department_id;', {
+    connection.query('SELECT department_id, title SUM (salary) FROM role GROUP by department_id;', {
       department_id: answer.depBud
     },
       (err, res) => {
