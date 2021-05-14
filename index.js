@@ -421,19 +421,16 @@ const removeRole = () => {
 
 //View the total utilized budget of a department (totalBudget)
 const totalBudget = () => {
-  inquirer.prompt([{
-    type: 'rawlist',
-    name: 'debBud',
-    message: 'Please choose the department ID to view total utilized budget',
-    choices: ['CEO', 'Marketing', 'Sales', 'Accounting', 'IT', 'HR']
-  }]).then((answer) => {
-    connection.query('SELECT department_id, title SUM (salary) FROM role GROUP by department_id;', {
-      department_id: answer.depBud
-    },
-      (err, res) => {
-        if (err) throw err;
-        console.table(res);
-        optionsStart();
-      })
-  })
+  connection.query(`
+  SELECT role.department_id AS ID, 
+  department.name AS Department,
+  SUM(salary) AS Budget
+  FROM  role  
+  INNER JOIN department ON role.department_id = department.id 
+  GROUP BY  role.department_id`,
+    (err, res) => {
+      if (err) throw err;
+      console.table(res);
+      optionsStart();
+    })
 }
