@@ -14,7 +14,7 @@ function optionsStart() {
     type: 'list',
     name: 'start',
     message: 'What would you like to do?',
-    choices: ['View All Employees', 'View All Emplyees by Manager', 'Add Employee', 'Remove Employee', 'Update Employee Role', 'Update Employee Manager', 'View All Departments', 'Add New Department', 'Remove Department', 'View All Roles', 'Add New Role', 'Remove Role', 'View total utilized budget']
+    choices: ['View All Employees', 'View All Emplyees by Manager', 'Add Employee', 'Remove Employee', 'Update Employee Role', 'Update Employee Manager', 'View All Departments', 'Add New Department', 'Remove Department', 'View All Roles', 'Add New Role', 'Remove Role', 'View total utilized budget', 'Exit']
   })
     .then((answer) => {
       switch (answer.start) {
@@ -68,6 +68,8 @@ function optionsStart() {
         case 'View total utilized budget':
           totalBudget();
           break;
+        default:
+          connection.end();
       }
     })
 };
@@ -127,7 +129,7 @@ const addEmp = () => {
     const newEmp = [answer.first_name, answer.last_name]
     connection.query(`SELECT role.id, role.title FROM role`, (err, res) => {
       if (err) throw err;
-      const roles = res.map(({ role_id, title }) => ({ name: title, value: role_id }));
+      const roles = res.map(({ id, title }) => ({ name: title, value: id }));
       inquirer.prompt([{
         type: 'list',
         name: 'role',
@@ -139,7 +141,7 @@ const addEmp = () => {
         newEmp.push(role);
         connection.query(`SELECT * FROM employee`, (err, res) => {
           if (err) throw err;
-          const mg = res.map(({ employee_id, first_name, last_name }) => ({ name: first_name + ' ' + last_name, value: employee_id }));
+          const mg = res.map(({ id, first_name, last_name }) => ({ name: first_name + ' ' + last_name, value: id }));
           inquirer.prompt([{
             type: 'list',
             name: 'manager',
