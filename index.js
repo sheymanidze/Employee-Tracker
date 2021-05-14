@@ -308,41 +308,19 @@ const addRole = () => {
 
 
 //View Employee by Manager (empByManager)
-// const empByManager = () => {
-//   connection.query(`SELECT CONCAT(employee.first_name, ' ' , employee.last_name) AS full_name FROM employee INNER JOIN role ON employee.role_id=role.id
-//   INNER JOIN department ON department.id=role.department_id
-//   WHERE role.title  IN ('Marketing Manager', 'Sales Manager', 'Account Manager', 'IT Manager', 'Human Resources');`,
-//     function (err, res) {
-//       let managerList = [];
-//       let managerID = {};
-
-//       res.forEach(({ full_name, id }) => {
-//         managerList.push(full_name);
-//         managerID[full_name] = id;
-//       });
-
-//       console.table(res);
-
-
-//       inquirer.prompt([{
-//         type: 'list',
-//         name: 'byManager',
-//         message: 'Please choose the manager to view employees',
-//         choices: managerList
-//       }]).then((answer) => {
-//         let selectedManager = managerID[answer.managerList];
-//         connection.query(`SELECT CONCAT(employee.first_name, ' ' , employee.last_name) AS full_name, department_name, role.title FROM employee INNER JOIN role ON employee.role_id = role.id INNER JOIN department ON department.id=role.department_id WHERE manager_id=?;`,
-//           {
-//             manager_id: selectedManager
-//           },
-//           function (err, manager) {
-//             console.table(manager)
-//           })
-//         optionsStart()
-
-//       });
-//     })
-// }
+const empByManager = () => {
+  connection.query(`SELECT 
+  a.first_name AS FirstName,
+  a.last_name AS LastName,
+  concat(b.first_name, ' ',b.last_name) as Manager
+  FROM employee a
+  LEFT OUTER JOIN employee b ON a.manager_id = b.id 
+  ORDER BY Manager;`, (err, res) => {
+    if (err) throw err;
+    console.table(res);
+    optionsStart();
+  })
+}
 
 //Delete Employee (removeEmp)
 
