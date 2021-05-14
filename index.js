@@ -375,7 +375,7 @@ const removeEmp = () => {
 //Delete Departments (removeDepartment)
 
 const removeDepartment = () => {
-  const remDep = '`SELECT * FROM department'
+  const remDep = 'SELECT * FROM department'
   connection.query(remDep, (err, res) => {
     if (err) throw err;
     inquirer.prompt([{
@@ -389,8 +389,7 @@ const removeDepartment = () => {
       const remDep2 = `DELETE FROM department WHERE ?`
       connection.query(remDep2, [{ id: answer.dep_id }], (err) => {
         if (err) throw err;
-        console.table(res);
-        optionsStart();
+        allDepartments();
       })
     })
   })
