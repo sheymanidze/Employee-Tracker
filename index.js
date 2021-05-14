@@ -361,8 +361,7 @@ const removeEmp = () => {
       const queryRemEmp1 = `DELETE FROM employee WHERE ?`
       connection.query(queryRemEmp1, [{ id: answer.employeeID }], (err) => {
         if (err) throw err;
-        console.table(res);
-        optionsStart();
+        allEmployees();
       })
 
     })
