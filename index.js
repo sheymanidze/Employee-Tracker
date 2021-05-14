@@ -372,6 +372,28 @@ const removeEmp = () => {
 
 //Delete Departments (removeDepartment)
 
+const removeDepartment = () => {
+  const remDep = '`SELECT * FROM department'
+  connection.query(remDep, (err, res) => {
+    if (err) throw err;
+    inquirer.prompt([{
+      type: 'list',
+      name: 'dep_id',
+      message: 'Please select a department you would like to delete from the list',
+      choices: res.map(department => {
+        return { name: `${department.name}`, value: department.id }
+      })
+    }]).then(answer => {
+      const remDep2 = `DELETE FROM department WHERE ?`
+      connection.query(remDep2, [{ id: answer.dep_id }], (err) => {
+        if (err) throw err;
+        console.table(res);
+        optionsStart();
+      })
+    })
+  })
+}
+
 //Delete Roles (removeRole)
 const removeRole = () => {
   const remRole = '`SELECT * FROM role'
