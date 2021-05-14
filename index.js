@@ -1,6 +1,7 @@
 const inquirer = require('inquirer');
 const connection = require('./config/connection.js');
 const mysql = require('mysql');
+const { restoreDefaultPrompts } = require('inquirer');
 require('console.table');
 
 
@@ -75,12 +76,12 @@ function optionsStart() {
 
 //View All Employees
 const allEmployees = () => {
-  connection.query('SELECT * FROM employee', (err, res) => {
+  connection.query(`SELECT employee.id, first_name, last_name, role.title, department.name,  manager_id, salary FROM employee INNER JOIN role ON employee.role_id=role.id INNER JOIN department ON role.department_id=department_id`, (err, res) => {
     if (err) throw err;
 
-    console.table(res)
+    console.table(res);
 
-    optionsStart()
+    optionsStart();
 
   });
 }
@@ -91,9 +92,9 @@ const allDepartments = () => {
   connection.query('SELECT * FROM department', (err, res) => {
     if (err) throw err;
 
-    console.table(res)
+    console.table(res);
 
-    optionsStart()
+    optionsStart();
 
   });
 }
@@ -108,4 +109,112 @@ const allRoles = () => {
     optionsStart()
 
   });
+}
+
+//Add Employee
+const addEmp = () => {
+  inquirer.prompt([{
+    type: 'input',
+    name: 'first_name',
+    message: 'Please provide First Name of employee you would like to add',
+
+  },
+  {
+    type: 'input',
+    name: 'last_name',
+    message: 'Please provide Last Name of employee you would like to add'
+  },
+  {
+    type: 'list',
+    name: 'role.title',
+    message: "Please choose employee's role",
+    choices: ["Marketing Manager", "Marketing Assistant", "Sales Manager", "Sales Representative", "Account Manager", "Account Assistant", "IT Manager", "Tech Support", "Developer", "Human Resources"]
+  },
+  {
+    type: 'rawlist',
+    name: 'manager_id',
+    message: 'Please choose manager ID of employee you would like to add',
+    choices() {
+      const managerChoices = [];
+      res.forEach((manager_id) => {
+        managerChoices.push(manager_id)
+      });
+      return managerChoices;
+    }
+  },
+  {
+    type: 'rawlist',
+    name: 'department',
+    message: 'Please choose department of employee you would like to add ',
+    choices() {
+      const depChoices = [];
+      res.forEach((department_name) => {
+        depChoices.push(department_name)
+      });
+      return depChoices;
+    }
+  }
+
+  ]).then((answer) => {
+    connection.query(`INSERT INTO employee SET ?`,
+      {
+        first_name: answer.first_name,
+        last_name: answer.last_name,
+        title: answer.role.title,
+        manager_id: answer.manager_id
+      }, function (err, res) {
+        console.table(res);
+        console.table(err);
+        optionsStart();
+      })
+  })
+}
+
+//Add Department
+const addDepartment = () => {
+  inquirer.prompt([{
+    type: 'input',
+    name: 'department_name',
+    message: 'Please add new Department Name'
+  }]).then((answer) => {
+    connection.query(`INSERT INTO department VALUES (?)`, (err, res) => {
+      if (err) throw err;
+
+      console.table(res);
+
+      allDepartments();
+      optionsStart();
+
+    })
+  })
+}
+
+//Add Role
+const addRole = () => {
+  inquirer.prompt([{
+    type: 'input',
+    name: 'title',
+    message: 'Please type the role you would like to add'
+  },
+  {
+    type: 'input',
+    name: 'salary',
+    message: 'Please provide the salary for the role'
+  },
+  {
+    type: 'input',
+    name: 'department_id',
+    message: 'Please provide with department ID'
+  }
+  ]).then((answer) => {
+    connection.query('INSERT INTO roles SET ?', (err, res) => {
+      if (err) throw err;
+
+      console.table(res);
+
+      allRoles();
+
+      optionsStart();
+    })
+  })
 }
