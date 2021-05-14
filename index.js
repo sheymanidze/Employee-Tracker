@@ -75,7 +75,7 @@ function optionsStart() {
 
 //View All Employees
 const allEmployees = () => {
-  connection.query(`SELECT employee.id, first_name, last_name, role.title, department.name,  manager_id, salary FROM employee INNER JOIN role ON employee.role_id=role.id INNER JOIN department ON role.department_id=department_id`, (err, res) => {
+  connection.query(`SELECT employee.id, first_name, last_name, role.title, department.name AS department,  manager_id, salary FROM employee INNER JOIN role ON employee.role_id=role.id INNER JOIN department ON role.department_id=department_id`, (err, res) => {
     if (err) throw err;
 
     console.table(res);
@@ -226,8 +226,50 @@ const addRole = () => {
 
 //Delete Employee (removeEmp)
 
+// const removeEmp = () => {
+//   const queryRemEmp = `SELECT * FROM employee`
+//   connection.query(queryRemEmp, (err, res) => {
+//     if (err) throw err;
+//     inquirer.prompt([{
+//       type: 'list',
+//       name: 'employeeID',
+//       message: 'Please select an employee you would like to delete from the list',
+//       choices: res.map(employee = {
+//         return { name: `${employee.first_name} ${employee.last_name}`, value: employee.id }
+//       })
+//     }]).then(answer => {
+//       const queryRemEmp1 = `DELETE FROM employee WHERE ?`
+//       connection.query(queryRemEmp1, [{ id: answer.employeeID }], (err) => {
+//         if (err) throw err;
+//         console.table(res);
+//         optionsStart();
+//       })
+
+//     })
+//   })
+
+// };
+
+
+
 //Delete Departments (removeDepartment)
 
 //Delete Roles (removeRole)
 
-//View the total utilized budget of a department ()
+//View the total utilized budget of a department (totalBudget)
+const totalBudget = () => {
+  inquirer.prompt([{
+    type: 'rewlist',
+    name: 'depBud',
+    message: 'Please choose the department'
+  }]).then((answer) => {
+    connection.query('SELECT department_id, SUM (salary) FROM role GROUP by department_id;', {
+      department_id: answer.depBud
+    },
+      (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        optionsStart();
+      })
+  })
+}
