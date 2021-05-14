@@ -254,51 +254,57 @@ const addDepartment = () => {
     name: 'department_name',
     message: 'Please add new Department Name'
   }]).then((answer) => {
-    connection.query(`INSERT INTO department SET ?)`,
-      {
-        department_name: answer.department_name
+    connection.query(`INSERT INTO department (name) VALUES (?)`, answer.department_name, (err) => {
+      if (err) throw err;
+      allDepartments();
 
-      }, (err, res) => {
-        if (err) throw err;
-
-        console.table(res);
-
-        allDepartments();
-        optionsStart();
-
-      })
+    })
   })
 }
 
 //Add Role
 const addRole = () => {
-  inquirer.prompt([{
-    type: 'input',
-    name: 'title',
-    message: 'Please type the role you would like to add'
-  },
-  {
-    type: 'input',
-    name: 'salary',
-    message: 'Please provide the salary for the role'
-  },
-  {
-    type: 'input',
-    name: 'department_id',
-    message: 'Please provide with department ID'
-  }
-  ]).then((answer) => {
-    connection.query('INSERT INTO roles SET ?', (err, res) => {
-      if (err) throw err;
+  connection.query(`SELECT * FROM department`, (err, res) => {
+    if (err) throw err;
+    let departmentArray = [];
+    res.forEach(element => {
+      departmentArray.push(element.name);
+    });
+    inquirer.prompt([
+      {
+        type: 'list',
+        name: 'department',
+        message: 'Please choose the department',
+        choices: departmentArray
+      },
+      {
+        type: 'input',
+        name: 'title',
+        message: 'Please type the role you would like to add'
+      },
+      {
+        type: 'input',
+        name: 'salary',
+        message: 'Please provide the salary for the role'
+      },
 
-      console.table(res);
-
-      allRoles();
-
-      optionsStart();
+    ]).then((answer) => {
+      let departmentId;
+      res.forEach((element) => {
+        if (answer.department === element.name) {
+          departmentId = element.id
+        };
+      });
+      connection.query('INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)',
+        [answer.title, answer.salary, departmentId],
+        (err) => {
+          if (err) throw err;
+          allRoles();
+        })
     })
-  })
+  });
 }
+
 
 //Update Employee Roles (updateEmpRole)
 
