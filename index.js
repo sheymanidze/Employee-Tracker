@@ -85,19 +85,6 @@ function optionsStart() {
 //View All Employees
 const allEmployees = () => {
   connection.query(
-    // SELECT 
-    // a.id AS Employee,
-    // a.first_name AS First,
-    // a.last_name AS Last,
-    // role.title AS Title,
-    // department.name AS Department,
-    // role.salary AS Salary,
-    // concat(b.first_name, ' ',b.last_name) as Manager
-    // FROM employee a 
-    // LEFT OUTER JOIN employee b ON a.manager_id = b.id 
-    // INNER JOIN role ON (role.id = a.role_id) 
-    // INNER JOIN department ON (department.id = role.department_id) 
-    // ORDER BY a.id;
 
     `SELECT employee.id AS Employee, employee.first_name AS FirsName, employee.last_name AS LastName, role.title AS Title,
     department.name AS Department,
@@ -107,17 +94,14 @@ const allEmployees = () => {
      LEFT JOIN role ON (role.id = employee.role_id) 
      LEFT JOIN department ON (department.id = role.department_id)
      ORDER BY employee.id;
-     `
+     ` , (err, res) => {
+    if (err) throw err;
 
+    printTable(res);
 
-    , (err, res) => {
-      if (err) throw err;
+    optionsStart();
 
-      printTable(res);
-
-      optionsStart();
-
-    });
+  });
 }
 
 //View All Departments
@@ -185,7 +169,6 @@ const addEmp = () => {
             const manager = response.manager;
             newEmp.push(manager);
             connection.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`, newEmp, (err, res) => {
-              console.log(newEmp);
               if (err) throw err;
 
               allEmployees();
@@ -279,7 +262,6 @@ const updateEmpRole = () => {
         choices: roles
       }
       ]).then((answer) => {
-        console.log(answer)
         connection.query(`UPDATE employee SET employee.role_id = ? WHERE employee.id = ?`, [answer.chRole, answer.emp], (err) => {
           if (err) throw err;
           allEmployees();
