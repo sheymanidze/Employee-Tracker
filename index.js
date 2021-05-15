@@ -22,7 +22,7 @@ function optionsStart() {
     type: 'list',
     name: 'start',
     message: 'What would you like to do?',
-    choices: ['View All Employees', 'View All Employees by Manager', 'Add Employee', 'Remove Employee', 'Update Employee Role', 'Update Employee Manager', 'View All Departments', 'Add New Department', 'Remove Department', 'View All Roles', 'Add New Role', 'Remove Role', 'View total utilized budget', 'Exit']
+    choices: ['View All Employees', 'View All Employees by Manager', 'Add Employee', 'Remove Employee', 'Update Employee Role', 'View All Departments', 'Add New Department', 'Remove Department', 'View All Roles', 'Add New Role', 'Remove Role', 'View total utilized budget', 'Exit']
   })
     .then((answer) => {
       switch (answer.start) {
@@ -44,10 +44,6 @@ function optionsStart() {
 
         case 'Update Employee Role':
           updateEmpRole();
-          break;
-
-        case 'Update Employee Manager':
-          updateEmpManager();
           break;
 
         case 'View All Departments':
@@ -298,7 +294,7 @@ const updateEmpRole = () => {
   });
 };
 
-//Update Employee Manager (updateEmpManager)
+//Update Employee Manager (updateEmpManager) will be added later
 
 
 
