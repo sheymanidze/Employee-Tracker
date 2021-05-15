@@ -1,8 +1,8 @@
 const inquirer = require('inquirer');
 const connection = require('./config/connection.js');
 const mysql = require('mysql');
-require('console.table');
 const figlet = require('figlet');
+const { printTable } = require("console-table-printer");
 
 
 connection.connect(function (err) {
@@ -104,7 +104,7 @@ const allEmployees = () => {
   ORDER BY a.id;`, (err, res) => {
     if (err) throw err;
 
-    console.table(res);
+    printTable(res);
 
     optionsStart();
 
@@ -117,7 +117,7 @@ const allDepartments = () => {
   connection.query('SELECT * FROM department', (err, res) => {
     if (err) throw err;
 
-    console.table(res);
+    printTable(res);
 
     optionsStart();
 
@@ -129,7 +129,7 @@ const allRoles = () => {
   connection.query('SELECT * FROM role', (err, res) => {
     if (err) throw err;
 
-    console.table(res)
+    printTable(res)
 
     optionsStart()
 
@@ -301,7 +301,7 @@ const empByManager = () => {
     LEFT OUTER JOIN employee b ON a.manager_id = b.id 
     ORDER BY Manager;`, (err, res) => {
     if (err) throw err;
-    console.table(res);
+    printTable(res);
     optionsStart();
   })
 }
@@ -390,7 +390,7 @@ const totalBudget = () => {
   GROUP BY  role.department_id`,
     (err, res) => {
       if (err) throw err;
-      console.table(res);
+      printTable(res);
       optionsStart();
     })
 }
