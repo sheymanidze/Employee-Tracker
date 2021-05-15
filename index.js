@@ -236,6 +236,18 @@ const addRole = () => {
 }
 
 //Update Employee Roles (updateEmpRole)
+const updateEmpRole = () => {
+  let queryNewR = `DELETE FROM role WHERE ?`
+  connection.query(queryNewR, (err, res) => {
+    if (err) throw err;
+    inquirer.prompt([{
+      type: 'list',
+      name: 'del_role',
+      message: 'Please chose role you would like to update',
+      choices: res.map(role.title)
+    }])
+  })
+}
 
 
 //Update Employee Manager (updateEmpManager)
