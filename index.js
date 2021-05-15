@@ -237,18 +237,42 @@ const addRole = () => {
 
 //Update Employee Roles (updateEmpRole)
 const updateEmpRole = () => {
-  let queryNewR = `DELETE FROM role WHERE ?`
+  let queryNewR = `Select *  FROM role`;
   connection.query(queryNewR, (err, res) => {
-    if (err) throw err;
+    const newRole = res.map(function (element) {
+      return {
+        name: `${element.first_name} ${element.last_name}`,
+        value: element.id
+      }
+    });
     inquirer.prompt([{
       type: 'list',
-      name: 'del_role',
-      message: 'Please chose role you would like to update',
-      choices: res.map(role.title)
-    }])
+      name: 'empUpdate',
+      message: 'Please select a role you would like to update',
+      choices: newRole
+    }]).then(choice1 => {
+      connection.query('SELECT * FROM role', (err, res) => {
+        const newerRole = res.map(function (data) {
+          return {
+            name: data.title,
+            value: data.id
+          }
+        });
+        inquirer.prompt([{
+          type: 'list',
+          name: 'upd_role',
+          message: 'Please choose new role',
+          choices: newerRole
+        }]).then(choice2 => {
+          const empUpd = `UPDATE employee SET employee.role_id=? WHERE employee.id=?`
+          connection.query(empUpd, [choice2.upd_role, choice1.empUpdate], function (err, res) {
+
+          })
+        })
+      })
+    })
   })
 }
-
 
 //Update Employee Manager (updateEmpManager)
 
