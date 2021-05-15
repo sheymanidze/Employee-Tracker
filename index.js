@@ -246,45 +246,57 @@ const addRole = () => {
   });
 }
 
-//Update Employee Roles (updateEmpRole)
-// const updateEmpRole = () => {
-//   let queryNewR = `Select *  FROM role`;
-//   connection.query(queryNewR, (err, res) => {
-//     const newRole = res.map(function (element) {
-//       return {
-//         name: `${element.first_name} ${element.last_name}`,
-//         value: element.id
-//       }
-//     });
-//     inquirer.prompt([{
-//       type: 'list',
-//       name: 'empUpdate',
-//       message: 'Please select a role you would like to update',
-//       choices: newRole
-//     }]).then(choice1 => {
-//       connection.query('SELECT * FROM role', (err, res) => {
-//         const newerRole = res.map(function (data) {
-//           return {
-//             name: data.title,
-//             value: data.id
-//           }
-//         });
-//         inquirer.prompt([{
-//           type: 'list',
-//           name: 'upd_role',
-//           message: 'Please choose new role',
-//           choices: newerRole
-//         }]).then(choice2 => {
-//           const empUpd = `UPDATE employee SET employee.role_id=? WHERE employee.id=?`
-//           connection.query(empUpd, [choice2.upd_role, choice1.empUpdate], function (err, res) {
-//             var
+//Update Employee Roles(updateEmpRole)
+const updateEmpRole = () => {
+  connection.query(`SELECT 
+    employee.id, employee.first_name, employee.last_name, role.id
+    FROM employee, role, department 
+    WHERE department.id = role.department_id AND role.id = employee.role_id`, (err, res) => {
+    if (err) throw err;
+    let chooseEmp = [];
+    res.forEach((item) => {
+      chooseEmp.push(`${item.first_name} ${item.last_name}`);
+    });
+    connection.query(`SELECT role.id, role.title FROM role`, (err, res) => {
+      let newRole = [];
+      res.forEach((item) => {
+        newRole.push(item.title);
+      });
+      inquirer.prompt([{
+        type: 'list',
+        name: 'emp',
+        message: 'Please choose an employee you would like to update role for',
+        choices: chooseEmp
+      },
+      {
+        type: 'list',
+        name: 'chRole',
+        message: 'Please write new role',
+        choices: newRole
+      }
+      ]).then((answer) => {
+        let newID;
+        let empID;
+        res.forEach((item) => {
+          if (answer.chRole === item.title) {
+            newID = item.role_id;
+          }
+        });
+        res.forEach((item) => {
+          if (answer.emp === `${item.first_name} ${item.last_name}`) {
+            empID = item.employee_id;
+          }
+        });
+        connection.query(`UPDATE employee SET employee.role_id = ? WHERE employee.id = ?`, [newID, empID], (err) => {
+          if (err) throw err;
+          allEmployees();
+        });
 
-//           })
-//         })
-//       })
-//     })
-//   })
-// }
+      });
+    });
+
+  });
+};
 
 //Update Employee Manager (updateEmpManager)
 
