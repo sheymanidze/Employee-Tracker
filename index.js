@@ -14,7 +14,7 @@ function optionsStart() {
     type: 'list',
     name: 'start',
     message: 'What would you like to do?',
-    choices: ['View All Employees', 'View All Emplyees by Manager', 'Add Employee', 'Remove Employee', 'Update Employee Role', 'Update Employee Manager', 'View All Departments', 'Add New Department', 'Remove Department', 'View All Roles', 'Add New Role', 'Remove Role', 'View total utilized budget', 'Exit']
+    choices: ['View All Employees', 'View All Employees by Manager', 'Add Employee', 'Remove Employee', 'Update Employee Role', 'Update Employee Manager', 'View All Departments', 'Add New Department', 'Remove Department', 'View All Roles', 'Add New Role', 'Remove Role', 'View total utilized budget', 'Exit']
   })
     .then((answer) => {
       switch (answer.start) {
@@ -22,7 +22,7 @@ function optionsStart() {
           allEmployees();
           break;
 
-        case 'View All Emplyees by Manager':
+        case 'View All Employees by Manager':
           empByManager();
           break;
 
@@ -236,43 +236,44 @@ const addRole = () => {
 }
 
 //Update Employee Roles (updateEmpRole)
-const updateEmpRole = () => {
-  let queryNewR = `Select *  FROM role`;
-  connection.query(queryNewR, (err, res) => {
-    const newRole = res.map(function (element) {
-      return {
-        name: `${element.first_name} ${element.last_name}`,
-        value: element.id
-      }
-    });
-    inquirer.prompt([{
-      type: 'list',
-      name: 'empUpdate',
-      message: 'Please select a role you would like to update',
-      choices: newRole
-    }]).then(choice1 => {
-      connection.query('SELECT * FROM role', (err, res) => {
-        const newerRole = res.map(function (data) {
-          return {
-            name: data.title,
-            value: data.id
-          }
-        });
-        inquirer.prompt([{
-          type: 'list',
-          name: 'upd_role',
-          message: 'Please choose new role',
-          choices: newerRole
-        }]).then(choice2 => {
-          const empUpd = `UPDATE employee SET employee.role_id=? WHERE employee.id=?`
-          connection.query(empUpd, [choice2.upd_role, choice1.empUpdate], function (err, res) {
+// const updateEmpRole = () => {
+//   let queryNewR = `Select *  FROM role`;
+//   connection.query(queryNewR, (err, res) => {
+//     const newRole = res.map(function (element) {
+//       return {
+//         name: `${element.first_name} ${element.last_name}`,
+//         value: element.id
+//       }
+//     });
+//     inquirer.prompt([{
+//       type: 'list',
+//       name: 'empUpdate',
+//       message: 'Please select a role you would like to update',
+//       choices: newRole
+//     }]).then(choice1 => {
+//       connection.query('SELECT * FROM role', (err, res) => {
+//         const newerRole = res.map(function (data) {
+//           return {
+//             name: data.title,
+//             value: data.id
+//           }
+//         });
+//         inquirer.prompt([{
+//           type: 'list',
+//           name: 'upd_role',
+//           message: 'Please choose new role',
+//           choices: newerRole
+//         }]).then(choice2 => {
+//           const empUpd = `UPDATE employee SET employee.role_id=? WHERE employee.id=?`
+//           connection.query(empUpd, [choice2.upd_role, choice1.empUpdate], function (err, res) {
+//             var
 
-          })
-        })
-      })
-    })
-  })
-}
+//           })
+//         })
+//       })
+//     })
+//   })
+// }
 
 //Update Employee Manager (updateEmpManager)
 
@@ -287,13 +288,11 @@ const empByManager = () => {
     concat(b.first_name, ' ',b.last_name) as Manager
     FROM employee a
     LEFT OUTER JOIN employee b ON a.manager_id = b.id 
-    ORDER BY Manager;
-    `, (err, res) => {
+    ORDER BY Manager;`, (err, res) => {
     if (err) throw err;
     console.table(res);
     optionsStart();
-  }
-  )
+  })
 }
 
 
