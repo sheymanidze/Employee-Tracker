@@ -1,4 +1,6 @@
-# Employee-Tracker
+# Employee-Tracker  
+
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 ## Table of contents
  * [General info](#General-Info)
@@ -32,7 +34,13 @@
 
 # Screenshots
 
+ Start of application
 
+ ![Start]()
+
+ End of application
+
+ ![]()
 
 # Application Code
 
