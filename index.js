@@ -2,10 +2,18 @@ const inquirer = require('inquirer');
 const connection = require('./config/connection.js');
 const mysql = require('mysql');
 require('console.table');
+const figlet = require('figlet');
 
 
 connection.connect(function (err) {
   if (err) throw err;
+  console.log(figlet.textSync('EMPLOYEE TRACKER', {
+    font: 'Big Money-se',
+    horizontalLayout: 'default',
+    verticalLayout: 'default',
+    width: 100,
+    whitespaceBreak: true
+  }))
   optionsStart();
 })
 
