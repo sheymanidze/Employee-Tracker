@@ -78,6 +78,9 @@ function optionsStart() {
           totalBudget();
           break;
         default:
+          console.log(figlet.textSync('Thank You', {
+            font: 'Big Money-se'
+          }));
           connection.end();
       }
     })
