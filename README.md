@@ -8,7 +8,6 @@
  * [Video Link](#Video-Link)
  * [Application Code](#Application-Code)
  * [Screenshots](#Screenshots)
- * [Application Code](#Application-Code)
  * [Comments](#Comments)
 
 
@@ -36,37 +35,31 @@
 
  Start of application
 
- ![Start]()
+ ![Start](images/start.png)
 
 
 
  End of application
 
- ![Exit]()
+ ![Exit](images/exit.png)
 
 
 
  All Employees
 
- ![employees]()
+ ![employees](images/employees.png)
 
 
 
  All Roles
 
- ![Roles]()
+ ![Roles](images/roles.png)
 
- 
+
 
  All Departments
 
- ![departments]()
-
- 
-
-# Application Code
-
-  To view application code, please follow the link []()
+ ![departments](images/dep.png)
 
 
 
