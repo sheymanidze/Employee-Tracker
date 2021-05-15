@@ -84,27 +84,40 @@ function optionsStart() {
 
 //View All Employees
 const allEmployees = () => {
-  connection.query(`
-  SELECT 
-  a.id AS Employee,
-  a.first_name AS First,
-  a.last_name AS Last,
-  role.title AS Title,
-  department.name AS Department,
-  role.salary AS Salary,
-  concat(b.first_name, ' ',b.last_name) as Manager
-  FROM employee a 
-  LEFT OUTER JOIN employee b ON a.manager_id = b.id 
-  INNER JOIN role ON (role.id = a.role_id) 
-  INNER JOIN department ON (department.id = role.department_id) 
-  ORDER BY a.id;`, (err, res) => {
-    if (err) throw err;
+  connection.query(
+    // SELECT 
+    // a.id AS Employee,
+    // a.first_name AS First,
+    // a.last_name AS Last,
+    // role.title AS Title,
+    // department.name AS Department,
+    // role.salary AS Salary,
+    // concat(b.first_name, ' ',b.last_name) as Manager
+    // FROM employee a 
+    // LEFT OUTER JOIN employee b ON a.manager_id = b.id 
+    // INNER JOIN role ON (role.id = a.role_id) 
+    // INNER JOIN department ON (department.id = role.department_id) 
+    // ORDER BY a.id;
 
-    printTable(res);
+    `SELECT employee.id AS Employee, employee.first_name AS FirsName, employee.last_name AS LastName, role.title AS Title,
+    department.name AS Department,
+    role.salary AS Salary, concat(b.first_name, ' ',b.last_name) as Manager
+     FROM employee
+     LEFT OUTER JOIN employee b ON employee.manager_id = b.id 
+     LEFT JOIN role ON (role.id = employee.role_id) 
+     LEFT JOIN department ON (department.id = role.department_id)
+     ORDER BY employee.id;
+     `
 
-    optionsStart();
 
-  });
+    , (err, res) => {
+      if (err) throw err;
+
+      printTable(res);
+
+      optionsStart();
+
+    });
 }
 
 //View All Departments
@@ -245,19 +258,14 @@ const addRole = () => {
 //Update Employee Roles(updateEmpRole)
 const updateEmpRole = () => {
   connection.query(`SELECT 
-    employee.id, employee.first_name, employee.last_name, role.id
-    FROM employee, role, department 
-    WHERE department.id = role.department_id AND role.id = employee.role_id`, (err, res) => {
+    employee.id, employee.first_name, employee.last_name
+    FROM employee`, (err, res) => {
     if (err) throw err;
-    let chooseEmp = [];
-    res.forEach((item) => {
-      chooseEmp.push(`${item.first_name} ${item.last_name}`);
-    });
-    connection.query(`SELECT role.id, role.title FROM role`, (err, res) => {
-      let newRole = [];
-      res.forEach((item) => {
-        newRole.push(item.title);
-      });
+
+    const chooseEmp = res.map(item => ({ name: `${item.first_name} ${item.last_name}`, value: item.id }))
+    connection.query(`SELECT role.id, role.title FROM role`, (err, response) => {
+
+      const roles = response.map(item => ({ "name": item.title, "value": item.id }));
       inquirer.prompt([{
         type: 'list',
         name: 'emp',
@@ -267,23 +275,12 @@ const updateEmpRole = () => {
       {
         type: 'list',
         name: 'chRole',
-        message: 'Please write new role',
-        choices: newRole
+        message: 'Please choose new role',
+        choices: roles
       }
       ]).then((answer) => {
-        let newID;
-        let empID;
-        res.forEach((item) => {
-          if (answer.chRole === item.title) {
-            newID = item.role_id;
-          }
-        });
-        res.forEach((item) => {
-          if (answer.emp === `${item.first_name} ${item.last_name}`) {
-            empID = item.employee_id;
-          }
-        });
-        connection.query(`UPDATE employee SET employee.role_id = ? WHERE employee.id = ?`, [newID, empID], (err) => {
+        console.log(answer)
+        connection.query(`UPDATE employee SET employee.role_id = ? WHERE employee.id = ?`, [answer.chRole, answer.emp], (err) => {
           if (err) throw err;
           allEmployees();
         });

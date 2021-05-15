@@ -1,6 +1,3 @@
-DROP DATABASE IF EXISTS emp_trackerDB;
-CREATE database emp_trackerDB;
-USE emp_trackerDB;
 
 CREATE TABLE department (
   id INT AUTO_INCREMENT NOT NULL,
