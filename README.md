@@ -23,7 +23,7 @@
 
 # Video Link 
 
- You can view a demo of the generator by following the link  [https://youtu.be/uXyKxgsQ40k](https://youtu.be/uXyKxgsQ40k)
+ You can view a demo of Employee Tracker by following the link  [https://youtu.be/uXyKxgsQ40k](https://youtu.be/uXyKxgsQ40k)
 
 # Application Code
 
